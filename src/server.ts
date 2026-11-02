@@ -1,60 +1,62 @@
-import express , { type Express , type Request , type Response} from "express";
+// import express , { type Express , type Request , type Response} from "express";
 
-type Task = {
-  id: number;
-  title: string;
-  completed: boolean;
-};
+import app from "./app.ts";
 
-const tasks: Task[] = [];
+// type Task = {
+//   id: number;
+//   title: string;
+//   completed: boolean;
+// };
 
-let nextTaskId = 1;
+// const tasks: Task[] = [];
 
-const app : Express = express();
+// let nextTaskId = 1;
 
-app.use(express.json());
+// const app : Express = express();
+
+// app.use(express.json());
 
 const PORT = 3000;
 
-app.get("/tasks",(req:Request , res:Response)=>{
-    res.status(200).json({
-        status:"OK",
-        message:"Express server is running successfully."
-    })
-})
+// app.get("/tasks",(req:Request , res:Response)=>{
+//     res.status(200).json({
+//         status:"OK",
+//         message:"Express server is running successfully."
+//     })
+// });
 
-app.get("/health",(req:Request,res:Response)=>{
-    res.status(200).json({
-        status:"OK",
-        message:"Server is healthy and running."
-    })
-})
+// app.get("/health",(req:Request,res:Response)=>{
+//     res.status(200).json({
+//         status:"OK",
+//         message:"Server is healthy and running."
+//     })
+// });
 
-app.post("/tasks",(req:Request,res:Response)=>{
-    console.log(req.body);
-    const {title} = req.body || {};
+// app.post("/tasks",(req:Request,res:Response)=>{
+//     console.log(req.body);
+//     const {title} = req.body || {};
 
-    if(typeof title !== "string" || !title.trim()){
-        res.status(400).json({
-            status:"ERROR",
-            message:"Valid title is required"
-        })
-    }
+//     if(typeof title !== "string" || !title.trim()){
+//         res.status(400).json({
+//             status:"ERROR",
+//             message:"Valid title is required"
+//         })
+//     }
 
-    const newTask: Task = {
-    id: nextTaskId++,
-    title: title.trim(),
-    completed: false,
-    };
+//     const newTask: Task = {
+//     id: nextTaskId++,
+//     title: title.trim(),
+//     completed: false,
+//     };
 
-    tasks.push(newTask);
+//     tasks.push(newTask);
 
-    res.status(201).json({
-        status:"OK",
-        message:"Data received successfully.",
-        data:newTask
-    })
-})
+//     res.status(201).json({
+//         status:"OK",
+//         message:"Data received successfully.",
+//         data:newTask
+//     })
+// });
 
 app.listen(PORT ,()=>{
     console.log(`Server running at http://localhost:${PORT}`);
