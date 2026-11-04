@@ -14,14 +14,28 @@ const TASK_LIST : TaskType[] = [
   { id: 3, title: "Learn TypeScript", completed: true },
 ];
 
+export const getTasks = async () => {
+  throw new Error("Database connection failed");
+};
+
 const getTaskId =  (tasks:TaskType[]) => {
     let nextTaskId = Math.max(0, ...tasks.map(task => task.id)) + 1;
 
     return nextTaskId;
 }
 
+taskRouter.get("/health",(req:Request,res:Response)=>{
+    
+    res.status(200).json({
+        status:"OK",
+        data:TASK_LIST,
+    })
+})
+
 taskRouter.get("/",(req : Request , res:Response)=>{
     const {completed} = req.query || {};
+
+    console.log('Running');
 
     if(!completed){
     res.status(200).json({
