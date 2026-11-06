@@ -1,312 +1,312 @@
-import {Router, type Request, type Response} from "express";
-import { sendSuccessResponse } from "../utils/api-response.ts";
-import { AppError } from "../utils/AppError.ts";
+import {Router} from "express";
+import { createTaskController, getAllTaskController, getTaskByIdController } from "../controllers/task.contoller.ts";
+// import { sendSuccessResponse } from "../utils/api-response.ts";
+// import { AppError } from "../utils/AppError.ts";
+// import { TASK_LIST } from "../constant.ts";
 
 const taskRouter  = Router();
 
-interface TaskType {
-    id: number;
-    title: string;
-    completed: boolean;
-}
+// interface TaskType {
+//     id: number;
+//     title: string;
+//     completed: boolean;
+// }
 
-const TASK_LIST : TaskType[] = [
-  { id: 1, title: "Learn Node.js", completed: true },
-  { id: 2, title: "Learn Express", completed: false },
-  { id: 3, title: "Learn TypeScript", completed: true },
-];
+// export const getTasks = async () => {
+//   throw new Error("Database connection failed");
+// };
 
-export const getTasks = async () => {
-  throw new Error("Database connection failed");
-};
+// const getTaskId =  (tasks:TaskType[]) => {
+//     let nextTaskId = Math.max(0, ...tasks.map(task => task.id)) + 1;
 
-const getTaskId =  (tasks:TaskType[]) => {
-    let nextTaskId = Math.max(0, ...tasks.map(task => task.id)) + 1;
+//     return nextTaskId;
+// }
 
-    return nextTaskId;
-}
+// const validateTaskId = (
+//   rawId: string
+// ): number | null => {
+//   if (!/^[1-9]\d*$/.test(rawId)) {
+//     return null;
+//   }
 
-const validateTaskId = (
-  rawId: string
-): number | null => {
-  if (!/^[1-9]\d*$/.test(rawId)) {
-    return null;
-  }
+//   const id = Number(rawId);
 
-  const id = Number(rawId);
+//   return Number.isSafeInteger(id) ? id : null;
+// };
 
-  return Number.isSafeInteger(id) ? id : null;
-};
-
-taskRouter.get("/health",(req:Request,res:Response)=>{
+// taskRouter.get("/health",(req:Request,res:Response)=>{
     
-    res.status(200).json({
-        status:"OK",
-        data:TASK_LIST,
-    })
-})
+//     res.status(200).json({
+//         status:"OK",
+//         data:TASK_LIST,
+//     })
+// })
 
-taskRouter.get("/",(req : Request , res:Response)=>{
-    const {completed} = req.query || {};
+// taskRouter.get("/",(req : Request , res:Response)=>{
+//     const {completed} = req.query || {};
 
-    console.log('Running');
+//     console.log('Running');
 
-    if(!completed){
-    // res.status(200).json({
-    //     status:"OK",
-    //     data:TASK_LIST,
-    //     message:"All tasks fetched successfully.",
-    // });
+//     if(!completed){
+//     // res.status(200).json({
+//     //     status:"OK",
+//     //     data:TASK_LIST,
+//     //     message:"All tasks fetched successfully.",
+//     // });
 
-    sendSuccessResponse(
-        res,
-        TASK_LIST,
-        200,
-        'Task fetched successfully'
-    )
+//     sendSuccessResponse(
+//         res,
+//         TASK_LIST,
+//         200,
+//         'Task fetched successfully'
+//     )
 
-    return;
-    }
+//     return;
+//     }
 
-    if (completed !== undefined && completed !== "true" && completed !== "false") {
-    throw new AppError(
-    400,
-    "TASK_NOT_FOUND",
-    "Task status must be true or false."
-    )
-    //   res.status(400).json({
-    //     status: "ERROR",
-    //     message: "completed must be true or false.",
-    //   });
-    //   return;
-    }
+//     if (completed !== undefined && completed !== "true" && completed !== "false") {
+//     throw new AppError(
+//     400,
+//     "TASK_NOT_FOUND",
+//     "Task status must be true or false."
+//     )
+//     //   res.status(400).json({
+//     //     status: "ERROR",
+//     //     message: "completed must be true or false.",
+//     //   });
+//     //   return;
+//     }
 
-   const filteredTasks = TASK_LIST.filter((task)=> task.completed === (completed === "true"));
+//    const filteredTasks = TASK_LIST.filter((task)=> task.completed === (completed === "true"));
     
-   res.status(200).json({
-    status:"OK",
-    data:filteredTasks,
-    message:`All tasks with completed status ${completed} fetched successfully.`,
-   })
-})
+//    res.status(200).json({
+//     status:"OK",
+//     data:filteredTasks,
+//     message:`All tasks with completed status ${completed} fetched successfully.`,
+//    })
+// })
 
-taskRouter.get("/:id",(req : Request,res:Response)=>{
-    const {id} = req.params || {};
+// taskRouter.get("/:id",(req : Request,res:Response)=>{
+//     const {id} = req.params || {};
 
-    const getTaskById = TASK_LIST.find((task)=>task.id === Number(id));
+//     const getTaskById = TASK_LIST.find((task)=>task.id === Number(id));
 
-    if(!getTaskById){
-        res.status(404).json({
-            status:"ERROR",
-            message:`Task with id ${id} not found.`
-        })
+//     if(!getTaskById){
+//         res.status(404).json({
+//             status:"ERROR",
+//             message:`Task with id ${id} not found.`
+//         })
 
-        return;
-    }
+//         return;
+//     }
 
-    res.status(200).json({
-    status:"OK",
-    taskId:getTaskById
-    });
-});
+//     res.status(200).json({
+//     status:"OK",
+//     taskId:getTaskById
+//     });
+// });
 
-taskRouter.post("/",(req:Request,res:Response)=>{
-    console.log(req.body , 'req.body');
+// taskRouter.post("/",(req:Request,res:Response)=>{
+//     console.log(req.body , 'req.body');
 
-    if(!req.body || !req.body.title || typeof req.body.title !== "string" || !req.body.title.trim()){
-        res.status(400).json({
-            status:"ERROR",
-            message:"Valid title is required."
-        });
+//     if(!req.body || !req.body.title || typeof req.body.title !== "string" || !req.body.title.trim()){
+//         res.status(400).json({
+//             status:"ERROR",
+//             message:"Valid title is required."
+//         });
 
-        return ;
-    }
+//         return ;
+//     }
 
-    const {title } = req.body || {};
+//     const {title } = req.body || {};
 
-    const newTask = {
-        id:getTaskId(TASK_LIST),
-        title:title.trim(),
-        completed:false
-    }
+//     const newTask = {
+//         id:getTaskId(TASK_LIST),
+//         title:title.trim(),
+//         completed:false
+//     }
 
-    TASK_LIST.push(newTask);
+//     TASK_LIST.push(newTask);
 
-    res.status(201).json({
-        status:"OK",
-        message:"Task created successfully.",
-    })
-})
+//     res.status(201).json({
+//         status:"OK",
+//         message:"Task created successfully.",
+//     })
+// })
 
-taskRouter.delete("/:id",(req:Request,res:Response)=>{
- const {id} = req.params || {};
+// taskRouter.delete("/:id",(req:Request,res:Response)=>{
+//  const {id} = req.params || {};
 
-  if(!id){
-    res.status(400).json({
-        status:"ERROR",
-        message:"Task id is required."
-    })
+//   if(!id){
+//     res.status(400).json({
+//         status:"ERROR",
+//         message:"Task id is required."
+//     })
 
-    return;
+//     return;
 
-}
+// }
 
-    const findTaskIndex = TASK_LIST.findIndex((task)=>task.id === Number(id));
+//     const findTaskIndex = TASK_LIST.findIndex((task)=>task.id === Number(id));
 
-    if(findTaskIndex === -1){
-        res.status(404).json({
-            status:"ERROR",
-            message:`Task with id ${id} not found.`
-        })
+//     if(findTaskIndex === -1){
+//         res.status(404).json({
+//             status:"ERROR",
+//             message:`Task with id ${id} not found.`
+//         })
 
-        return ;
-    }
+//         return ;
+//     }
 
-    TASK_LIST.splice(findTaskIndex,1);
+//     TASK_LIST.splice(findTaskIndex,1);
 
-    res.status(200).json({
-        status:"OK",
-        message:`Task with id ${id} deleted successfully.`
-    })
+//     res.status(200).json({
+//         status:"OK",
+//         message:`Task with id ${id} deleted successfully.`
+//     })
   
-});
+// });
 
-taskRouter.put("/:id",(req:Request,res:Response)=>{
-    const {id} = req.params || {};
+// taskRouter.put("/:id",(req:Request,res:Response)=>{
+//     const {id} = req.params || {};
 
-    if(!validateTaskId(id as string)){
-        res.status(400).json({
-            status:"ERROR",
-            message:"Task id is required."
-        });
+//     if(!validateTaskId(id as string)){
+//         res.status(400).json({
+//             status:"ERROR",
+//             message:"Task id is required."
+//         });
 
-        return;
-    }
+//         return;
+//     }
 
-    const {title , completed} = req.body || {};
+//     const {title , completed} = req.body || {};
 
-    if (
-    typeof title !== "string" ||
-    !title.trim() ||
-   typeof completed !== "boolean"
-   ) {
-    res.status(400).json({
-    status: "ERROR",
-    message: "Valid title and completed fields are required.",
-    });
+//     if (
+//     typeof title !== "string" ||
+//     !title.trim() ||
+//    typeof completed !== "boolean"
+//    ) {
+//     res.status(400).json({
+//     status: "ERROR",
+//     message: "Valid title and completed fields are required.",
+//     });
 
-    return;
-    }
+//     return;
+//     }
 
-    const findTaskIndex = TASK_LIST.findIndex((task)=>task.id === Number(id));
+//     const findTaskIndex = TASK_LIST.findIndex((task)=>task.id === Number(id));
 
-    if(findTaskIndex === -1){
-        res.status(404).json({
-            status:"ERROR",
-            message:`Task with id ${id} not found.`
-        });
+//     if(findTaskIndex === -1){
+//         res.status(404).json({
+//             status:"ERROR",
+//             message:`Task with id ${id} not found.`
+//         });
 
-        return ;
-    }
+//         return ;
+//     }
 
-    const updatedTask = {
-        id:Number(id),
-        title:title?.trim(),
-        completed
-    };
+//     const updatedTask = {
+//         id:Number(id),
+//         title:title?.trim(),
+//         completed
+//     };
 
-    TASK_LIST[findTaskIndex] = updatedTask;
+//     TASK_LIST[findTaskIndex] = updatedTask;
 
-    res.status(200).json({
-        status:"OK",
-        message:`Task with id ${id} updated successfully.`,
-        data:updatedTask
-    });
+//     res.status(200).json({
+//         status:"OK",
+//         message:`Task with id ${id} updated successfully.`,
+//         data:updatedTask
+//     });
 
     
-});
+// });
 
 
-taskRouter.patch("/:id",(req:Request,res:Response)=>{
-    const {id} = req.params || {};
+// taskRouter.patch("/:id",(req:Request,res:Response)=>{
+//     const {id} = req.params || {};
 
-    if(!validateTaskId(id as string)){
-        res.status(400).json({
-            status:"ERROR",
-            message:"Task id is required."
-        });
+//     if(!validateTaskId(id as string)){
+//         res.status(400).json({
+//             status:"ERROR",
+//             message:"Task id is required."
+//         });
 
-        return;
-    }
+//         return;
+//     }
 
-    const body = req.body;
+//     const body = req.body;
 
-    if (
-  !body ||
-  typeof body !== "object" ||
-  Array.isArray(body)
-) {
-  res.status(400).json({
-    status: "ERROR",
-    message: "A valid JSON object is required.",
-  });
-  return;
-}
+//     if (
+//   !body ||
+//   typeof body !== "object" ||
+//   Array.isArray(body)
+// ) {
+//   res.status(400).json({
+//     status: "ERROR",
+//     message: "A valid JSON object is required.",
+//   });
+//   return;
+// }
 
-    const {title , completed} = req.body || {};
+//     const {title , completed} = req.body || {};
 
-    if (
-  Object.keys(body).length === 0 ||
-  Object.keys(body).some(
-    (key) => !["title", "completed"].includes(key)
-  ) ||
-  (
-    title !== undefined &&
-    (
-      typeof title !== "string" ||
-      !title.trim()
-    )
-  ) ||
-  (
-    completed !== undefined &&
-    typeof completed !== "boolean"
-  )
-) {
-  res.status(400).json({
-    status: "ERROR",
-    message: "Invalid task update.",
-  });
+//     if (
+//   Object.keys(body).length === 0 ||
+//   Object.keys(body).some(
+//     (key) => !["title", "completed"].includes(key)
+//   ) ||
+//   (
+//     title !== undefined &&
+//     (
+//       typeof title !== "string" ||
+//       !title.trim()
+//     )
+//   ) ||
+//   (
+//     completed !== undefined &&
+//     typeof completed !== "boolean"
+//   )
+// ) {
+//   res.status(400).json({
+//     status: "ERROR",
+//     message: "Invalid task update.",
+//   });
 
-  return;
-}
+//   return;
+// }
 
-    const findTaskIndex = TASK_LIST.findIndex((task)=>task.id === Number(id));
+//     const findTaskIndex = TASK_LIST.findIndex((task)=>task.id === Number(id));
 
-    if(findTaskIndex === -1){
-        res.status(404).json({
-            status:"ERROR",
-            message:`Task with id ${id} not found.`
-        });
+//     if(findTaskIndex === -1){
+//         res.status(404).json({
+//             status:"ERROR",
+//             message:`Task with id ${id} not found.`
+//         });
 
-        return ;
-    }
+//         return ;
+//     }
 
-    const updatedTask = {
-        ...TASK_LIST[findTaskIndex],
-        title:title !== undefined ? title.trim() : TASK_LIST[findTaskIndex].title,
-        completed:completed !== undefined ? completed : TASK_LIST[findTaskIndex].completed
-    };
+//     const updatedTask = {
+//         ...TASK_LIST[findTaskIndex],
+//         title:title !== undefined ? title.trim() : TASK_LIST[findTaskIndex].title,
+//         completed:completed !== undefined ? completed : TASK_LIST[findTaskIndex].completed
+//     };
 
-    TASK_LIST[findTaskIndex] = updatedTask;
+//     TASK_LIST[findTaskIndex] = updatedTask;
 
-    res.status(200).json({
-        status:"OK",
-        message:`Task with id ${id} updated successfully.`,
-        data:updatedTask
-    });
+//     res.status(200).json({
+//         status:"OK",
+//         message:`Task with id ${id} updated successfully.`,
+//         data:updatedTask
+//     });
 
 
-})
+// })
+
+taskRouter.get("/",getAllTaskController);
+taskRouter.get("/:id",getTaskByIdController);
+taskRouter.post("/",createTaskController);
 
 
 export default taskRouter;
