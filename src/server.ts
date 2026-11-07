@@ -1,6 +1,7 @@
 // import express , { type Express , type Request , type Response} from "express";
 
 import app from "./app.ts";
+import { pool } from "./config/database.ts";
 
 // type Task = {
 //   id: number;
@@ -58,6 +59,40 @@ const PORT = 3000;
 //     })
 // });
 
-app.listen(PORT ,()=>{
+const server = app.listen(PORT ,()=>{
     console.log(`Server running at http://localhost:${PORT}`);
 })
+
+let shuttingDown = false;
+
+const shutDown = async (signal:string) => {
+      if(shuttingDown) return;
+
+      shuttingDown = true;
+
+      console.log(`Received ${signal}`);
+
+
+      try {
+          await new Promise<void>((resolve,reject)=>{
+                server.close((error) => {
+                if (error) reject(error);
+                else resolve();
+            });
+          })
+          await pool.end();
+
+          process.exitCode = 0;
+      } catch (error) {
+        console.error("Shutdown failed:", error);
+        process.exitCode = 1;
+      }
+}
+
+process.once("SIGINT", () => {
+  void shutDown("SIGINT");
+});
+
+process.once("SIGTERM", () => {
+  void shutDown("SIGTERM");
+});
