@@ -1,7 +1,7 @@
 import { pool } from "../config/database.ts";
 // import { TASK_LIST } from "../constant.ts";
 
-import type { NewTask, Task } from "../models/task.model.ts";
+import type { Task , CreateTaskInput , UpdateTaskInput , ReplaceTaskInput } from "../models/task.model.ts";
 
 
 // export const taskRepository = {
@@ -77,22 +77,40 @@ export const taskRepository = {
     return result.rows[0] ? result.rows[0] : null;
     },
 
-    async create(data: NewTask): Promise<Task> {
+    async create(data: CreateTaskInput): Promise<Task> {
     const {title}  = data;
 
     const result = await pool.query<Task>(
-        `INSERT INTO tasks(title , completed) VALUES($1,$2) RETURNING id , title , completed`,
-        [title,data.completed]
+        `INSERT INTO tasks(title) VALUES($1) RETURNING id , title , completed`,
+        [title]
     )
 
-    return { ...result.rows[0] };
+    const task = result.rows[0];
+
+    if (!task) {
+    throw new Error("Task creation returned no row");
+    }
+
+    return task;
     },
 
-    async replace(data:{id:number,title:string,completed:boolean}):Promise<Task>{
-        const {id , title , completed} = data;
+    async replace(id :number ,data:ReplaceTaskInput):Promise<Task | null>{
+        const {title , completed} = data;
 
         const result = await pool.query<Task>(
             `UPDATE tasks SET title=$1, completed=$2 WHERE id = $3 RETURNING id , title , completed`,
+            [title , completed , id]
+        )
+
+
+        return result.rows[0] ?? null;
+    },
+    async update(id :number ,data:UpdateTaskInput):Promise<Task | null>{
+        const {title , completed} = data;
+
+        const result = await pool.query<Task>(
+            `UPDATE tasks SET title=COALESCE($1,title), completed=COALESCE($2,completed) 
+            WHERE id = $3 RETURNING id , title , completed`,
             [title , completed , id]
         )
 

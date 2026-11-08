@@ -4,4 +4,17 @@ export interface Task {
   completed: boolean;
 }
 
-export type NewTask = Pick<Task, "title" | "completed">;
+export interface CreateTaskInput {
+    title:string;
+}
+
+export interface ReplaceTaskInput {
+    title: string;
+    completed: boolean;
+};
+
+export interface UpdateTaskInput {
+    title?: string;
+    completed?: boolean;
+};
+

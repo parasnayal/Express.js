@@ -1,3 +1,4 @@
+import type { ReplaceTaskInput, UpdateTaskInput } from "../models/task.model.ts";
 import { taskRepository } from "../repositories/task.repository.ts"
 import { AppError } from "../utils/AppError.ts";
 
@@ -35,14 +36,42 @@ export const taskService = {
 
     return taskRepository.create({
       title: title.trim(),
-      completed: false,
     });
     },
 
-    async updateTask(id:number,title:string,completed:boolean){
+    async updateTask(id:number,data:UpdateTaskInput){
+     if (
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data)
+    ) {
+    throw new AppError(
+      400,
+      "VALIDATION_ERROR",
+      "A valid update object is required"
+    );
+    }
+
+    const keys = Object.keys(data);
+
     if (
-      typeof title !== "string" ||
-      !title.trim()
+    keys.length === 0 ||
+    keys.some(
+      (key) => !["title", "completed"].includes(key)
+    )
+    ) {
+    throw new AppError(
+      400,
+      "VALIDATION_ERROR",
+      "At least one supported field is required"
+    );
+    }
+
+    const {title,completed} = data;    
+
+    if ( title !== undefined &&
+      (typeof title !== "string" ||
+      !title.trim())
     ) {
       throw new AppError(
         400,
@@ -50,22 +79,71 @@ export const taskService = {
         "Valid task title is required"
       );
     }
-    else if(typeof completed !== "boolean"){
+    if(completed !== undefined && typeof completed !== "boolean"){
         throw new AppError(
         400,
         "VALIDATION_ERROR",
         "completed should be boolean"
       );
     }
-    else if(typeof id !==  "number"){
-         throw new AppError(
-        400,
-        "VALIDATION_ERROR",
-        "Task id should be a number"
-      );
+
+    const task = await taskRepository.update(id,{
+        ...(title !== undefined && {
+    title:title.trim()
+    }),...(completed !== undefined &&{
+        completed
+    })})
+
+     if (!task) {
+        throw new AppError(
+        404,
+        "TASK_NOT_FOUND",
+        "Task not found"
+        );
+        
     }
 
-    return taskRepository.replace({id,title,completed})
+    return task;
+
+    },
+    async replaceTask(id:number,data:ReplaceTaskInput){
+    if (
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data)
+    ) {
+    throw new AppError(
+      400,
+      "VALIDATION_ERROR",
+      "A valid task object is required"
+    );
+    }
+    const {title , completed} = data;
+
+    if (
+    typeof title !== "string" ||
+    !title.trim() ||
+    typeof completed !== "boolean"
+  ) {
+    throw new AppError(
+      400,
+      "VALIDATION_ERROR",
+      "Valid title and completed fields are required"
+    );
+   }
+
+    const task = await taskRepository.replace(id,{title:title.trim(),completed})
+
+     if (!task) {
+        throw new AppError(
+        404,
+        "TASK_NOT_FOUND",
+        "Task not found"
+        );
+        
+    }
+
+    return task;
 
     },
 
