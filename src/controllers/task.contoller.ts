@@ -34,9 +34,7 @@ export const getAllTaskController = async (req : Request,res:Response) => {
       })
 }
 
-export const getTaskByIdController: RequestHandler<
-  { id: string }
-> = async (req :Request, res : Response) => {
+export const getTaskByIdController: RequestHandler<{ id: string }> = async (req :Request, res : Response) => {
   const id = parseTaskId(req.params.id as string);
 
   const task = await taskService.getTaskById(id);
@@ -47,8 +45,7 @@ export const getTaskByIdController: RequestHandler<
   });
 };
 
-export const createTaskController: RequestHandler =
-  async (req, res) => {
+export const createTaskController: RequestHandler = async (req, res) => {
     const task = await taskService.createTask(
       req.body?.title
     );
@@ -61,4 +58,30 @@ export const createTaskController: RequestHandler =
         data: task,
         message: "Task created successfully",
       });
-  };
+};
+
+export const updateTaskController : RequestHandler<{id:string}> = async (req:Request,res:Response) => {
+    const id = parseTaskId(req.params.id as string);
+
+    const {title , completed} = req.body || {};
+    
+    const task = await taskService.updateTask(id, title, completed);
+
+    res.status(200).json({
+        success:true,
+        data:task,
+        message:"Task updated successfully."
+    })
+}
+
+export const deleteTaskController: RequestHandler<{ id: string }> = async (req :Request, res : Response) => {
+  const id = parseTaskId(req.params.id as string);
+
+  const data = await taskService.deleteTask(id);
+
+  res.status(200).json({
+    success:true,
+    data,
+    message:'Task deleted successfully'
+  });
+};

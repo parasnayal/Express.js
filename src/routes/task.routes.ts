@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { createTaskController, getAllTaskController, getTaskByIdController } from "../controllers/task.contoller.ts";
+import { createTaskController, deleteTaskController, getAllTaskController, getTaskByIdController, updateTaskController } from "../controllers/task.contoller.ts";
 // import { sendSuccessResponse } from "../utils/api-response.ts";
 // import { AppError } from "../utils/AppError.ts";
 // import { TASK_LIST } from "../constant.ts";
@@ -307,6 +307,8 @@ const taskRouter  = Router();
 taskRouter.get("/",getAllTaskController);
 taskRouter.get("/:id",getTaskByIdController);
 taskRouter.post("/",createTaskController);
+taskRouter.put("/:id",updateTaskController);
+taskRouter.delete("/:id",deleteTaskController);
 
 
 export default taskRouter;
