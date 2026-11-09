@@ -41,5 +41,14 @@ export const userService = {
         }
 
         return user;
+    },
+    async createUser(payload:{name:string,email:string}){
+        const {name,email} = payload;
+
+        const user = await userRepository.create({name:name.trim(),email});
+
+        console.log(user,'user')
+
+        return user;
     }
 }

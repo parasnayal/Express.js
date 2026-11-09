@@ -12,6 +12,18 @@ export const getAllUserListController = async (req:Request,res:Response) => {
     })
 }
 
+export const createUserController = async (req:Request,res:Response) => {
+    const {name,email} = req.body || {};
+
+    const user = await userService.createUser({name:name.trim(),email});
+
+    res.status(200).json({
+        success:true,
+        data:user,
+        message:"User created Successfully."
+    })
+}
+
 export const getTasksByUserIdController = async (req:Request,res:Response) => {
     const {userId} = req.params || {};
 

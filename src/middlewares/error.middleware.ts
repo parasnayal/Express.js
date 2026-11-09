@@ -1,6 +1,8 @@
 import { type Request , type Response , type ErrorRequestHandler, type NextFunction } from "express";
 
 import { AppError } from "../utils/AppError.ts";
+import { translateDatabaseError } from "../utils/translate-database-error.ts";
+import { DatabaseError } from "pg";
 
 // export const errorHandler : ErrorRequestHandler = (err : Error , req : Request , res : Response , next : NextFunction) => {
 // console.error('API Error:',err);
@@ -59,6 +61,23 @@ console.error('API Error:',error);
     return;
         }
     }
+
+    if (error instanceof DatabaseError) {
+    const appError = translateDatabaseError(error);
+
+    if (appError) {
+      res.status(appError.statusCode).json({
+        success: false,
+        error: {
+          code: appError.code,
+          message: appError.message,
+        },
+      });
+      return;
+    }
+  }
+
+  console.error("Unexpected error:", error);
 
    res.status(500).json({
     success: false,

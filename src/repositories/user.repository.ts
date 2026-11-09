@@ -34,5 +34,18 @@ export const userRepository = {
         )
 
         return result.rows[0];
+    },
+    async create(data:{name:string,email:string}){
+        const {name,email} = data || {};
+
+        const result = await pool.query(
+            `INSERT INTO users(name,email)
+            VALUES($1,$2) RETURNING id,name,email`,
+            [name,email]
+        )
+
+        console.log(result,'resssssssss')
+
+       return result.rows[0];
     }
 }
