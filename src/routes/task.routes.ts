@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { createTaskController, deleteTaskController, getAllTaskController, getTaskByIdController, replaceTaskController, updateTaskController } from "../controllers/task.contoller.ts";
+import { createTaskController, deleteTaskController, getAllTaskController, getTaskByIdController, replaceTaskController, updateTaskController } from "../controllers/task.controller.ts";
 // import { sendSuccessResponse } from "../utils/api-response.ts";
 // import { AppError } from "../utils/AppError.ts";
 // import { TASK_LIST } from "../constant.ts";

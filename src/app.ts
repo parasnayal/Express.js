@@ -7,6 +7,7 @@ import {errorHandler } from "./middlewares/error.middleware.ts";
 import {requestLogger} from "./middlewares/logger.middleware.ts";
 import {requestIdMiddleware} from "./middlewares/request-id.middleware.ts";
 import { AppError } from "./utils/AppError.ts";
+import userRouter from "./routes/user.routes.ts";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(requestLogger);
 app.use(express.json());
 
 app.use("/tasks",taskRouter);
+app.use("/users",userRouter);
 
 app.use(()=>{
      throw new AppError(
