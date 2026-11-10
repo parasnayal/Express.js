@@ -1,17 +1,16 @@
-import {Pool} from "pg";
+import { Pool } from "pg";
 
 export const pool = new Pool({
-    host:process.env.PGHOST,
-    port:Number(process.env.PGPORT ?? 5432),
-    user:process.env.PGUSER,
-    password:process.env.PGPASSWORD,
-    database:process.env.PGDATABASE,
-    max:10,
-    idleTimeoutMillis:30000,
-    connectionTimeoutMillis:5000,
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT ?? 5432),
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
 });
 
-pool.on("error",(error)=>{
-    console.error("Unexpected idle database error:", error);
+pool.on("error", (error) => {
+  console.error("Unexpected idle database error:", error);
 });
-

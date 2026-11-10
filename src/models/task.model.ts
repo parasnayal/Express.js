@@ -5,16 +5,15 @@ export interface Task {
 }
 
 export interface CreateTaskInput {
-    title:string;
+  title: string;
 }
 
 export interface ReplaceTaskInput {
-    title: string;
-    completed: boolean;
-};
+  title: string;
+  completed: boolean;
+}
 
 export interface UpdateTaskInput {
-    title?: string;
-    completed?: boolean;
-};
-
+  title?: string;
+  completed?: boolean;
+}

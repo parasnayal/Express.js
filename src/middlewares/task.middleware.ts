@@ -1,4 +1,4 @@
-import {type Request , type Response , type NextFunction} from "express";
+import { type Request, type Response, type NextFunction } from "express";
 
 // export const logger = (req:Request , res : Response ,next : NextFunction) => {
 // console.log(req.method , 'method');
@@ -7,16 +7,15 @@ import {type Request , type Response , type NextFunction} from "express";
 // next();
 // }
 
-export const errorHandler = (err : Error , req : Request , res : Response , next : NextFunction) => {
-console.error(err.stack);
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
 
-if(res.headersSent){
+  if (res.headersSent) {
     return next(err);
-}
+  }
 
-res.status(500).json({
-    status:"ERROR",
-    message:"Internal server error."
-})
-
-}
+  res.status(500).json({
+    status: "ERROR",
+    message: "Internal server error.",
+  });
+};

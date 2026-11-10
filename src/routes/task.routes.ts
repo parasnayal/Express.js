@@ -1,10 +1,19 @@
-import {Router} from "express";
-import { createTaskController, deleteTaskController, getAllTaskController, getTaskByIdController, replaceTaskController, updateTaskController } from "../controllers/task.controller.ts";
+import { Router } from "express";
+import {
+  createTaskController,
+  deleteTaskController,
+  getAllTaskController,
+  getTaskByIdController,
+  replaceTaskController,
+  updateTaskController,
+} from "../controllers/task.controller.ts";
+import { requireAuth } from "../middlewares/requireAuth.middleware.ts";
+import { requireRole } from "../middlewares/requireRole.midlleware.ts";
 // import { sendSuccessResponse } from "../utils/api-response.ts";
 // import { AppError } from "../utils/AppError.ts";
 // import { TASK_LIST } from "../constant.ts";
 
-const taskRouter  = Router();
+const taskRouter = Router();
 
 // interface TaskType {
 //     id: number;
@@ -35,7 +44,7 @@ const taskRouter  = Router();
 // };
 
 // taskRouter.get("/health",(req:Request,res:Response)=>{
-    
+
 //     res.status(200).json({
 //         status:"OK",
 //         data:TASK_LIST,
@@ -78,7 +87,7 @@ const taskRouter  = Router();
 //     }
 
 //    const filteredTasks = TASK_LIST.filter((task)=> task.completed === (completed === "true"));
-    
+
 //    res.status(200).json({
 //     status:"OK",
 //     data:filteredTasks,
@@ -164,7 +173,7 @@ const taskRouter  = Router();
 //         status:"OK",
 //         message:`Task with id ${id} deleted successfully.`
 //     })
-  
+
 // });
 
 // taskRouter.put("/:id",(req:Request,res:Response)=>{
@@ -219,9 +228,7 @@ const taskRouter  = Router();
 //         data:updatedTask
 //     });
 
-    
 // });
-
 
 // taskRouter.patch("/:id",(req:Request,res:Response)=>{
 //     const {id} = req.params || {};
@@ -301,15 +308,14 @@ const taskRouter  = Router();
 //         data:updatedTask
 //     });
 
-
 // })
+taskRouter.use(requireAuth);
 
-taskRouter.get("/",getAllTaskController);
-taskRouter.get("/:id",getTaskByIdController);
-taskRouter.post("/",createTaskController);
-taskRouter.patch("/:id",updateTaskController);
-taskRouter.put("/:id",replaceTaskController);
-taskRouter.delete("/:id",deleteTaskController);
-
+taskRouter.get("/", getAllTaskController);
+taskRouter.get("/:id", getTaskByIdController);
+taskRouter.post("/", createTaskController);
+taskRouter.patch("/:id", updateTaskController);
+taskRouter.put("/:id", replaceTaskController);
+taskRouter.delete("/:id", deleteTaskController);
 
 export default taskRouter;

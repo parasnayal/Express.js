@@ -59,35 +59,44 @@ const PORT = 3000;
 //     })
 // });
 
-const server = app.listen(PORT ,()=>{
-    console.log(`Server running at http://localhost:${PORT}`);
-})
+const server = app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
 
 let shuttingDown = false;
 
-const shutDown = async (signal:string) => {
-      if(shuttingDown) return;
+const shutDown = async (signal: string) => {
+  if (shuttingDown) return;
 
-      shuttingDown = true;
+  shuttingDown = true;
 
-      console.log(`Received ${signal}`);
+  console.log(`Received ${signal}`);
 
+  // Hard deadline in case requests or pool clients never finish.
+  const forceExitTimer = setTimeout(() => {
+    console.error("Graceful shutdown deadline exceeded");
 
-      try {
-          await new Promise<void>((resolve,reject)=>{
-                server.close((error) => {
-                if (error) reject(error);
-                else resolve();
-            });
-          })
-          await pool.end();
+    server.closeAllConnections();
+    process.exit(1);
+  }, 30_000);
 
-          process.exitCode = 0;
-      } catch (error) {
-        console.error("Shutdown failed:", error);
-        process.exitCode = 1;
-      }
-}
+  try {
+    await new Promise<void>((resolve, reject) => {
+      server.close((error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+    });
+    await pool.end();
+
+    process.exitCode = 0;
+  } catch (error) {
+    console.error("Shutdown failed:", error);
+    process.exitCode = 1;
+  } finally {
+    clearTimeout(forceExitTimer);
+  }
+};
 
 process.once("SIGINT", () => {
   void shutDown("SIGINT");

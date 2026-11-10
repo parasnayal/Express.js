@@ -1,8 +1,8 @@
-import type { NextFunction , Request , Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 // export const requestLogger = (req : Request,res : Response,next : NextFunction) => {
 //     console.log(`${req.method} ${req.originalUrl}`);
-    
+
 //     const start = performance.now();
 
 //     res.once("finish",()=>{
@@ -20,15 +20,15 @@ import type { NextFunction , Request , Response } from "express";
 
 // }
 
-export const requestLogger = (req : Request,res : Response,next : NextFunction) => {
-    const start = performance.now();
-    
-    let logged = false;
+export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
+  const start = performance.now();
 
-    const logRequest = (outcome: string) =>{
-        if(logged) return ;
+  let logged = false;
 
-        logged = true;
+  const logRequest = (outcome: string) => {
+    if (logged) return;
+
+    logged = true;
 
     console.log({
       requestId: res.locals.requestId,
@@ -36,24 +36,21 @@ export const requestLogger = (req : Request,res : Response,next : NextFunction) 
       path: req.path,
       statusCode: res.statusCode,
       outcome,
-      durationMs: Math.round(
-        performance.now() - start
-      ),
+      durationMs: Math.round(performance.now() - start),
     });
+  };
+
+  res.once("finish", () => {
+    const duration = performance.now() - start;
+
+    logRequest("Completed");
+  });
+
+  res.once("close", () => {
+    if (!res.writableFinished) {
+      logRequest("Aborted");
     }
+  });
 
-    res.once("finish",()=>{
-        const duration = performance.now() - start;
-
-        logRequest("Completed");
-    })
-
-    res.once("close",()=>{
-        if(!res.writableFinished){
-            logRequest("Aborted");
-        }
-    })
-
-    next();
-
-}
+  next();
+};
