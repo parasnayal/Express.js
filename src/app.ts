@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 
 import taskRouter from "./routes/task.routes.ts";
 
@@ -10,16 +11,30 @@ import { AppError } from "./utils/AppError.ts";
 import userRouter from "./routes/user.routes.ts";
 import projectRouter from "./routes/project.routes.ts";
 import authRouter from "./routes/auth.routes.ts";
+import { sessionMiddleware } from "./config/session.ts";
+import { restoreAuth } from "./middlewares/restoreAuth.middleware.ts";
 
 const app = express();
 
 // app.use(logger);
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+  }),
+);
+
+app.use(express.json());
+
+app.use(sessionMiddleware);
+
+app.use(restoreAuth);
+
+// app.use
 
 app.use(requestIdMiddleware);
 
 app.use(requestLogger);
-
-app.use(express.json());
 
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/users", userRouter);
