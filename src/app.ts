@@ -11,8 +11,10 @@ import { AppError } from "./utils/AppError.ts";
 import userRouter from "./routes/user.routes.ts";
 import projectRouter from "./routes/project.routes.ts";
 import authRouter from "./routes/auth.routes.ts";
-import { sessionMiddleware } from "./config/session.ts";
-import { restoreAuth } from "./middlewares/restoreAuth.middleware.ts";
+// import { sessionMiddleware } from "./config/session.ts";
+// import { restoreAuth } from "./middlewares/restoreAuth.middleware.ts";
+import { restoreJwtAuth } from "./middlewares/restoreJwtAuth.middleware.ts";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -26,9 +28,11 @@ app.use(
 
 app.use(express.json());
 
-app.use(sessionMiddleware);
+// app.use(sessionMiddleware);
 
-app.use(restoreAuth);
+// app.use(restoreAuth);
+app.use(cookieParser());
+app.use(restoreJwtAuth);
 
 // app.use
 
